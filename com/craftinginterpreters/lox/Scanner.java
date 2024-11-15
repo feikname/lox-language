@@ -77,6 +77,8 @@ class Scanner {
 				// A comment goes until the end of the line.
 				while (peek() != '\n' && !isAtEnd())
 					advance();
+			} else if (isAlpha(c)) {
+				identifier();
 			} else {
 				addToken(SLASH);
 			}
@@ -96,12 +98,28 @@ class Scanner {
 		default:
 			if (isDigit(c)) {
 				number();
+			} else if (isAlpha(c)) {
+				identifier();
 			} else {
 				Lox.error(line, "Unexpected character.");
 			}
 			break;
 		}
 
+	}
+
+	private void identifier() {
+		while (isAlphaNumeric(peek()))
+			advance();
+		addToken(IDENTIFIER);
+	}
+
+	private boolean isAlpha(char c) {
+		return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+	}
+
+	private boolean isAlphaNumeric(char c) {
+		return isAlpha(c) || isDigit(c);
 	}
 
 	private boolean isDigit(char c) {
